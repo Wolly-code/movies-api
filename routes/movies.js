@@ -1,40 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-
-const movieSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    genre: {
-        type: String,
-        required: true
-    },
-    releaseYear: {
-        type: Number,
-        required: true
-    },
-    plot: {
-        type: String,
-        required: true
-    },
-    ratings: [{
-        source: {
-            type: String,
-            required: true
-        },
-        value: {
-            type: String,
-            required: true
-        }
-    }],
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
-const Movie = mongoose.model('Movie', movieSchema);
+const Movie = require('../models/movie');
 
 //* ADD MOVIE
 router.post('/', async (req, res) => {
@@ -59,9 +25,11 @@ router.post('/', async (req, res) => {
     }
 });
 
+
+//* Get Method
 router.get('/', async (req, res) => {
     try {
-        const movie = await Movie.find();
+        const movie = await Movie.find().select('-ratings._id -__v');
         console.log(movie);
         res.status(200).send(movie);
     } catch (error) {
